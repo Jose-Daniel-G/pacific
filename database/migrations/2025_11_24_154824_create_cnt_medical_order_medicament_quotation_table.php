@@ -10,11 +10,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('com_quotation_line', function (Blueprint $table) {
+        Schema::create('cnt_medical_order_medicament_quotation', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('com_quotation_id')->constrained('com_quotation');
-            $table->string('description')->nullable();
-            $table->decimal('amount', 12, 2)->nullable();
+            $table->foreignId('line_id')->constrained('com_quotation_line');
+            $table->foreignId('cnt_medical_order_medicament_id')->constrained('cnt_medical_order_medicament');
             $table->timestamps();
         });
     }
@@ -24,6 +23,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('com_quotation_line');
+        Schema::dropIfExists('cnt_medical_order_medicament_quotation');
     }
 };

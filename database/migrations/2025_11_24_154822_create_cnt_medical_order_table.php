@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cnt_medical_order_medicament_quotation', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+    Schema::create('cnt_medical_order', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('adm_admission_flow_id')->constrained('adm_admission_flow');
+        $table->text('notes')->nullable();
+        $table->timestamps();
+    });
     }
 
     /**
@@ -22,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cnt_medical_order_medicament_quotation');
+        Schema::dropIfExists('cnt_medical_order');
     }
 };

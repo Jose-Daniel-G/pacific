@@ -4,15 +4,16 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('sch_calendar', function (Blueprint $table) {
+        Schema::create('sch_slot_assigned', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('entity_id')->constrained('gbl_entity'); // paciente
+            $table->foreignId('sch_slot_id')->constrained('sch_slot');
             $table->timestamps();
         });
     }
@@ -22,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sch_calendar');
+        Schema::dropIfExists('sch_slot_assigned');
     }
 };

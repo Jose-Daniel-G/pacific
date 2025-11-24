@@ -4,15 +4,15 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('sch_event', function (Blueprint $table) {
+        Schema::create('sch_workflow_slot_assigned', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('sch_slot_assigned_id')->constrained('sch_slot_assigned');
             $table->timestamps();
         });
     }
@@ -22,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sch_event');
+        Schema::dropIfExists('sch_workflow_slot_assigned');
     }
 };
