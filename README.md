@@ -218,3 +218,5 @@ Es un sistema clínico REAL, bastante completo y muy bien estructurado.
     * Nombre del doctor
     * Fecha (`init_date`)
     * Hora inicio / fin
+
+    ![image](images/image.png)
