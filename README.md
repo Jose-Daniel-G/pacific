@@ -1,59 +1,220 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# GUÍA DE CONFIGURACIÓN
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Este documento describe la arquitectura de la base de datos para el flujo clínico (Quote-to-Appointment) y los pasos iniciales para poner el proyecto en funcionamiento (asumiendo un entorno Laravel).
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## CONFIGURACIÓN INICIAL DEL PROYECTO (Laravel)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Siga estos pasos para clonar y ejecutar la aplicación localmente:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 1. Clonar el Repositorio
 
-## Learning Laravel
+Abra su terminal o línea de comandos y clone el proyecto:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```bash
+git clone https://github.com/Jose-Daniel-G/pacific
+cd pacific
+```
+ **configurar credenciales en el archivo .env**
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=pacific
+DB_USERNAME=postgres
+DB_PASSWORD=
+- *IMPORTANTE EJECUTAR* : php artisan migrate --seed
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+php artisan serve
+```
+# VISIÓN GENERAL DEL SISTEMA Y 
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+* Pacientes
+* Profesionales de salud
+* Cotizaciones
+* Órdenes médicas
+* Medicamentos
+* Flux de admisión
+* Calendarios
+* Eventos (fechas)
+* Slots (horarios)
+* Citas agendadas
 
-## Laravel Sponsors
+El objetivo final del programa es:
+**Tomar una cotización y obtener la cita agendada (día y hora) con el doctor asociado.**
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Para eso se usa una consulta SQL muy larga que atraviesa **TODAS** las tablas del sistema.
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 1. ENTIDADES PRINCIPALES (Pacientes y Profesionales)
 
-## Contributing
+**Tabla: `gbl_entity`**
+Aquí se guardan todos los usuarios del sistema, tanto pacientes como médicos.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Atributos importantes:
 
-## Code of Conduct
+* `first_name`, `last_name`
+* `identification`
+* `entity_type`"patient" o "doctor"
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 2. COTIZACIONES Quotation
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**Tabla: `com_quotation`**
+Una cotización representa una solicitud de servicios/medicamentos.
 
-## License
+### 2.1 Quotation Line $\rightarrow$ Aqui es donde se encuentra el detalle de la cotizacion
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**Tabla: `com_quotation_line`**
+Cada línea es un detalle:
+
+* "Consulta general"
+* "Medicamento X"
+* "Procedimiento Y"
+
+Una cotización puede tener muchas líneas.
+
+### ORDEN MÉDICA
+
+A partir de una línea de cotización, se genera una orden médica.
+
+---
+
+## 3. Medical Order $\rightarrow$ Orden médica
+
+**Tabla: `cnt_medical_order`**
+Contiene la instrucción médica general.
+
+### 3.1 Medicament Order $\rightarrow$ Medicamentos en la orden
+
+**Tabla: `cnt_medical_order_medicament`**
+Ejemplo:
+
+* Amoxicilina 500mg
+* Ibuprofeno 400mg
+
+### 3.3 Relación entre línea de cotización y medicamento
+
+**Tabla: `cnt_medical_order_medicament_quotation`**
+
+Une:
+
+* Línea de cotización (`line_id`)
+* Medicamento en orden médica (`cnt_medical_order_medicament_id`)
+
+---
+
+## 4. ADMISIÓN DEL PACIENTE
+
+Una orden médica genera un flujo de admisión.
+
+### 4.1 Admisión
+
+**Tabla: `adm_admission`**
+Liga un paciente (`patient_entity_id`) con un estado clínico.
+
+### 4.2 Flujo de admisión
+
+**Tabla: `adm_admission_flow`**
+Dice en qué etapa está la atención del paciente.
+
+### AGENDAMIENTO
+
+El sistema agenda automáticamente una cita con un profesional.
+
+---
+
+## 5. Calendario del profesional
+
+**Tabla: `sch_calendar`**
+Indica los calendarios del médico.
+
+### 5.2 Eventos de calendario
+
+**Tabla: `sch_event`**
+Cada fila es un rango de fechas donde el profesional trabaja.
+
+### 5.3 Slot
+
+**Tabla: `sch_slot`**
+Es un horario específico dentro del evento, ej:
+
+* 08:00 – 08:30
+* 08:30 – 09:00
+
+### 5.4 Slot asignado al paciente
+
+**Tabla: `sch_slot_assigned`**
+Se asigna un slot a un paciente.
+
+### 5.5 Workflow slot
+
+**Tabla: `sch_workflow_slot_assigned`**
+Conecta el flujo de admisión con un horario disponible.
+
+### 5.6 Cita final
+
+**Tabla: `adm_admission_appointment`**
+Relaciona:
+
+* Admisión
+* Slot final asignado
+
+La consulta:
+
+* Busca por ID de la cotización
+* Y hace un recorrido de **TODAS LAS TABLAS**
+    hasta encontrar:
+    * el paciente,
+    * el doctor,
+    * la fecha,
+    * y la hora de la cita asignada.
+
+Es como seguir un hilo desde una cotización hasta la cita.
+
+---
+
+# RESUMEN FINAL
+
+El sistema completo hace esto:
+
+* Cotizas algo (servicio o medicamento).
+* Esa cotización genera órdenes médicas.
+* Las órdenes médicas activan un flujo de admisión.
+* La admisión crea una cita con un profesional.
+* Se agenda un slot dentro del calendario del médico.
+* La consulta SQL obtiene la información final de la cita.
+
+Es un sistema clínico REAL, bastante completo y muy bien estructurado.
+
+---
+
+## CÓMO SE CONECTA TODO (RESUMEN DEL FLUJO)
+
+1.  La cotización tiene líneas
+    `com_quotation` $\rightarrow$ `com_quotation_line`
+
+2.  Cada línea se asocia a un medicamento de orden médica
+    `com_quotation_line` $\rightarrow$ `cnt_medical_order_medicament_quotation` $\rightarrow$ `cnt_medical_order_medicament` $\rightarrow$ `cnt_medical_order`
+
+3.  La orden médica pertenece a un flujo de admisión
+    `cnt_medical_order` $\rightarrow$ `adm_admission_flow` $\rightarrow$ `adm_admission`
+
+4.  La admisión genera una cita
+    `adm_admission` $\rightarrow$ `adm_admission_appointment` $\rightarrow$ `sch_workflow_slot_assigned` $\rightarrow$ `sch_slot_assigned`
+
+5.  El slot asignado conecta al paciente con un doctor
+    `sch_slot_assigned.entity_id` = paciente
+    `sch_calendar.entity_id` = doctor
+
+6.  Finalmente se obtiene
+    * Nombre del paciente
+    * Nombre del doctor
+    * Fecha (`init_date`)
+    * Hora inicio / fin

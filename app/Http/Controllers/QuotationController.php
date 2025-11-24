@@ -21,7 +21,7 @@ class QuotationController extends Controller
         $id = $request->quotation_id;
 
         $data = DB::select('
-            SELECT 
+            SELECT DISTINCT
                 patient_entity.first_name AS patient_first_name,
                 patient_entity.last_name AS patient_last_name,
                 patient_entity.identification AS patient_identification,
@@ -30,14 +30,7 @@ class QuotationController extends Controller
                 event.init_date,
                 slot.init_time,
                 slot.end_time
-            FROM com_quotation cq
-            JOIN com_quotation_line cql ON cql.com_quotation_id = cq.id
-            JOIN cnt_medical_order_medicament_quotation momq ON momq.line_id = cql.id
-            JOIN cnt_medical_order_medicament mom ON mom.id = momq.cnt_medical_order_medicament_id
-            JOIN cnt_medical_order mo ON mo.id = mom.cnt_medical_order_id
-            JOIN adm_admission_flow aaf ON aaf.id = mo.adm_admission_flow_id
-            JOIN adm_admission aa ON aa.id = aaf.adm_admission_id
-            JOIN adm_admission_appointment aaa ON aaa.adm_admission_id = aa.id
+            FROM adm_admission_appointment aaa
             JOIN sch_workflow_slot_assigned wfsa ON wfsa.id = aaa.flow_id
             JOIN sch_slot_assigned sa ON sa.id = wfsa.sch_slot_assigned_id
             JOIN gbl_entity patient_entity ON patient_entity.id = sa.entity_id
@@ -45,7 +38,17 @@ class QuotationController extends Controller
             JOIN sch_event event ON event.id = slot.sch_event_id
             JOIN sch_calendar cal ON cal.id = event.sch_calendar_id
             JOIN gbl_entity doctor_entity ON doctor_entity.id = cal.entity_id
-            WHERE cq.id = ?
+            WHERE aaa.adm_admission_id IN (
+                SELECT aa.id
+                FROM com_quotation cq
+                JOIN com_quotation_line cql ON cql.com_quotation_id = cq.id
+                JOIN cnt_medical_order_medicament_quotation momq ON momq.line_id = cql.id
+                JOIN cnt_medical_order_medicament mom ON mom.id = momq.cnt_medical_order_medicament_id
+                JOIN cnt_medical_order mo ON mo.id = mom.cnt_medical_order_id
+                JOIN adm_admission_flow aaf ON aaf.id = mo.adm_admission_flow_id
+                JOIN adm_admission aa ON aa.id = aaf.adm_admission_id
+                WHERE cq.id = ?
+            )
         ', [$id]);
 
         return view('cotizacion.index', compact('data'));
