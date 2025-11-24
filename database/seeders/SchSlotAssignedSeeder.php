@@ -13,5 +13,9 @@ class SchSlotAssignedSeeder extends Seeder
             'entity_id' => 1, // paciente
             'sch_slot_id' => 1, // slot 8:00
         ]);
+        DB::table('sch_slot_assigned')->insert([
+            'entity_id' => 2, // paciente
+            'sch_slot_id' => 2, // slot 8:00
+        ]);
     }
 }

@@ -21,5 +21,17 @@ class QuotationLineSeeder extends Seeder
                 'amount' => 20000,
             ],
         ]);
+        DB::table('com_quotation_line')->insert([
+            [
+                'com_quotation_id' => 2,
+                'description' => 'Ibuprofeno 400mg',
+                'amount' => 50000,
+            ],
+            [
+                'com_quotation_id' => 2,
+                'description' => 'Acetaminofén 500mg',
+                'amount' => 20000,
+            ],
+        ]);
     }
 }

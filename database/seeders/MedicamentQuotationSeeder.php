@@ -18,6 +18,10 @@ class MedicamentQuotationSeeder extends Seeder
                 'line_id' => 2,
                 'cnt_medical_order_medicament_id' => 2,
             ],
+            [
+                'line_id' => 3,
+                'cnt_medical_order_medicament_id' => 3,
+            ],
         ]);
     }
 }

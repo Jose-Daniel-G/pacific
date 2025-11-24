@@ -13,5 +13,9 @@ class QuotationSeeder extends Seeder
             'code' => 'COT-001',
             'total' => 250000,
         ]);
+        DB::table('com_quotation')->insert([
+            'code' => 'COT-002',
+            'total' => 370000,
+        ]);
     }
 }

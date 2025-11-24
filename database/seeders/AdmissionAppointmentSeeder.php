@@ -13,5 +13,9 @@ class AdmissionAppointmentSeeder extends Seeder
             'adm_admission_id' => 1,
             'flow_id' => 1, // workflow slot
         ]);
+        DB::table('adm_admission_appointment')->insert([
+            'adm_admission_id' => 2,
+            'flow_id' => 2, // workflow slot
+        ]);
     }
 }

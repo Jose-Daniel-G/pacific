@@ -13,5 +13,9 @@ class MedicalOrderSeeder extends Seeder
             'adm_admission_flow_id' => 1,
             'notes' => 'Paciente presenta síntomas leves de infección respiratoria.',
         ]);
+        DB::table('cnt_medical_order')->insert([
+            'adm_admission_flow_id' => 2,
+            'notes' => 'Paciente presenta síntomas leves de fiebre.',
+        ]);
     }
 }

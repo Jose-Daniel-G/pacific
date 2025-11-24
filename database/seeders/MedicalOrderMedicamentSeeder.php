@@ -21,5 +21,17 @@ class MedicalOrderMedicamentSeeder extends Seeder
                 'quantity' => 12,
             ],
         ]);
+        DB::table('cnt_medical_order_medicament')->insert([
+            [
+                'cnt_medical_order_id' => 2,
+                'medicament_name' => 'Naproxeno 100mg',
+                'quantity' => 15,
+            ],
+            [
+                'cnt_medical_order_id' => 2,
+                'medicament_name' => 'Diclofenalco 300mg',
+                'quantity' => 2,
+            ],
+        ]);
     }
 }

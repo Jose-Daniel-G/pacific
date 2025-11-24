@@ -13,5 +13,9 @@ class AdmissionFlowSeeder extends Seeder
             'adm_admission_id' => 1,
             'flow_status' => 'in-progress',
         ]);
+        DB::table('adm_admission_flow')->insert([
+            'adm_admission_id' => 2,
+            'flow_status' => 'in-progress',
+        ]);
     }
 }

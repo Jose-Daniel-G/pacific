@@ -21,5 +21,17 @@ class SchSlotSeeder extends Seeder
                 'end_time' => '09:00',
             ],
         ]);
+        DB::table('sch_slot')->insert([
+            [
+                'sch_event_id' => 2,
+                'init_time' => '05:00',
+                'end_time' => '08:30',
+            ],
+            [
+                'sch_event_id' => 2,
+                'init_time' => '08:30',
+                'end_time' => '02:00',
+            ],
+        ]);
     }
 }

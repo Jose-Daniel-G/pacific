@@ -13,5 +13,9 @@ class AdmissionSeeder extends Seeder
             'patient_entity_id' => 1,
             'status' => 'active',
         ]);
+        DB::table('adm_admission')->insert([
+            'patient_entity_id' => 2,
+            'status' => 'active',
+        ]);
     }
 }

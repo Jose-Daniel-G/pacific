@@ -12,5 +12,8 @@ class SchWorkflowSlotAssignedSeeder extends Seeder
         DB::table('sch_workflow_slot_assigned')->insert([
             'sch_slot_assigned_id' => 1,
         ]);
+        DB::table('sch_workflow_slot_assigned')->insert([
+            'sch_slot_assigned_id' => 2,
+        ]);
     }
 }
