@@ -31,6 +31,8 @@ php artisan key:generate
 php artisan migrate --seed
 php artisan serve
 ```
+* Solo hay dos numeros de cotizacion 1 y 2, con sus reapectivas fechas
+
 # VISIÓN GENERAL DEL SISTEMA Y 
 
 * Pacientes
