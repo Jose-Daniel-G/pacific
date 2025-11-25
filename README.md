@@ -30,8 +30,9 @@ cp .env.example .env
 php artisan key:generate
 php artisan migrate --seed
 php artisan serve
+npm run dev
 ```
-* Solo hay dos numeros de cotizacion 1 y 2, con sus reapectivas fechas
+* Solo hay dos numeros de cotizacion 1 y 2, con sus reapectivas fechas y hora de inicio y fin
 
 # VISIÓN GENERAL DEL SISTEMA Y 
 
